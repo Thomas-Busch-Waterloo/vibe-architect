@@ -22,6 +22,8 @@ export async function streamChat(opts: StreamChatOptions) {
             return streamGemini(opts);
         case "anthropic":
             return streamAnthropic(opts);
+        case "mistral":
+            return streamMistral(opts);
         default:
             opts.onError(new Error(`Unknown provider: ${config.provider}`));
     }
@@ -86,6 +88,81 @@ async function streamOpenAI(opts: StreamChatOptions) {
             } catch {
                 // skip malformed
             }
+            return false;
+        });
+
+        onDone();
+    } catch (error) {
+        handleStreamError(error, onDone, onError);
+    }
+}
+
+// ─── Mistral ────────────────────────────────────────────────────────────────
+
+async function streamMistral(opts: StreamChatOptions) {
+    const { messages, apiKey, model, onChunk, onDone, onError, signal } = opts;
+    const config = getModelConfig(model);
+    const sysPrompt = opts.systemPrompt ?? SYSTEM_PROMPT;
+    const mistralMessages = [
+        { role: "system" as const, content: sysPrompt },
+        ...messages.map((m) => ({
+            role: m.role as "user" | "assistant" | "system",
+            content: m.content,
+        })),
+    ];
+
+    try {
+        const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: config.apiModel ?? model,
+                messages: mistralMessages,
+                stream: true,
+                max_tokens: config.maxTokens,
+                temperature: 0.7,
+            }),
+            signal,
+        });
+
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`Mistral API error (${response.status}): ${errorBody}`);
+        }
+
+        await readSSEStream(response, (data) => {
+            if (data === "[DONE]") {
+                onDone();
+                return true;
+            }
+
+            try {
+                const parsed = JSON.parse(data);
+                const delta = parsed.choices?.[0]?.delta?.content;
+
+                if (typeof delta === "string") {
+                    onChunk(delta);
+                    return false;
+                }
+
+                if (Array.isArray(delta)) {
+                    for (const part of delta) {
+                        if (part?.type === "text" && typeof part.text === "string") {
+                            onChunk(part.text);
+                        }
+                    }
+                    return false;
+                }
+
+                const text = parsed.choices?.[0]?.message?.content;
+                if (typeof text === "string") onChunk(text);
+            } catch {
+                // skip malformed
+            }
+
             return false;
         });
 

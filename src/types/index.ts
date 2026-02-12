@@ -30,7 +30,7 @@ export interface Message {
 
 
 // LLM providers for text chat and the ASR+TTS pipeline
-export type LLMProvider = "openai" | "gemini" | "anthropic";
+export type LLMProvider = "openai" | "gemini" | "anthropic" | "mistral";
 
 // Specific models
 export type LLMModel =
@@ -40,7 +40,9 @@ export type LLMModel =
   | "gemini-3-pro"
   | "gemini-3-flash"
   | "claude-opus-4.6"
-  | "claude-sonnet-4.5";
+  | "claude-sonnet-4.5"
+  | "mistral-medium-3.1"
+  | "mistral-small-3.2";
 
 export interface LLMModelConfig {
   id: LLMModel;
@@ -105,6 +107,20 @@ export const LLM_MODELS: LLMModelConfig[] = [
     provider: "anthropic",
     maxTokens: 64000,
     apiModel: "claude-sonnet-4-5-20250929",
+  },
+  {
+    id: "mistral-medium-3.1",
+    name: "Mistral Medium 3.1",
+    provider: "mistral",
+    maxTokens: 8192,
+    apiModel: "mistral-medium-latest",
+  },
+  {
+    id: "mistral-small-3.2",
+    name: "Mistral Small 3.2",
+    provider: "mistral",
+    maxTokens: 8192,
+    apiModel: "mistral-small-latest",
   },
 ];
 

@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import { LLMModel } from "@/types";
 
-type KeyProvider = "openai" | "gemini" | "anthropic";
+type KeyProvider = "openai" | "gemini" | "anthropic" | "mistral";
 
 interface SettingsState {
     // API Keys
     openaiKey: string;
     geminiKey: string;
     anthropicKey: string;
+    mistralKey: string;
 
     // Model selection
     activeLLMModel: LLMModel;
@@ -22,7 +23,7 @@ interface SettingsState {
     loadFromStorage: () => void;
 
     // Helpers
-    getKeyForProvider: (provider: "openai" | "gemini" | "anthropic") => string;
+    getKeyForProvider: (provider: "openai" | "gemini" | "anthropic" | "mistral") => string;
     hasKeyForModel: (model: LLMModel) => boolean;
 }
 
@@ -32,11 +33,13 @@ function computeIsConfigured(state: {
     openaiKey: string;
     geminiKey: string;
     anthropicKey: string;
+    mistralKey: string;
 }): boolean {
     return (
         state.openaiKey.length > 0 ||
         state.geminiKey.length > 0 ||
-        state.anthropicKey.length > 0
+        state.anthropicKey.length > 0 ||
+        state.mistralKey.length > 0
     );
 }
 
@@ -44,6 +47,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     openaiKey: "",
     geminiKey: "",
     anthropicKey: "",
+    mistralKey: "",
     activeLLMModel: "gpt-5.2-high",
     isConfigured: false,
 
@@ -52,10 +56,21 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             openai: "openaiKey",
             gemini: "geminiKey",
             anthropic: "anthropicKey",
+            mistral: "mistralKey",
         };
         const update = { [keyMap[provider]]: value };
         const state = { ...get(), ...update };
-        set({ ...update, isConfigured: computeIsConfigured(state as typeof state & { openaiKey: string; geminiKey: string; anthropicKey: string }) });
+        set({
+            ...update,
+            isConfigured: computeIsConfigured(
+                state as typeof state & {
+                    openaiKey: string;
+                    geminiKey: string;
+                    anthropicKey: string;
+                    mistralKey: string;
+                }
+            ),
+        });
         persistSettings({ ...get(), ...update });
     },
 
@@ -69,6 +84,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             openaiKey: "",
             geminiKey: "",
             anthropicKey: "",
+            mistralKey: "",
             isConfigured: false,
         });
         localStorage.removeItem(STORAGE_KEY);
@@ -83,6 +99,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
                     openaiKey: p.openaiKey || "",
                     geminiKey: p.geminiKey || "",
                     anthropicKey: p.anthropicKey || "",
+                    mistralKey: p.mistralKey || "",
                     activeLLMModel: p.activeLLMModel || "gpt-5.2-high",
                 };
                 set({
@@ -101,7 +118,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             ? s.openaiKey
             : provider === "gemini"
                 ? s.geminiKey
-                : s.anthropicKey;
+                : provider === "anthropic"
+                    ? s.anthropicKey
+                    : s.mistralKey;
     },
 
     hasKeyForModel: (model) => {
@@ -109,6 +128,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         if (model.startsWith("gpt-")) return s.openaiKey.length > 0;
         if (model.startsWith("gemini")) return s.geminiKey.length > 0;
         if (model.startsWith("claude")) return s.anthropicKey.length > 0;
+        if (model.startsWith("mistral")) return s.mistralKey.length > 0;
         return false;
     },
 }));
@@ -121,6 +141,7 @@ function persistSettings(state: Record<string, unknown>) {
                 openaiKey: state.openaiKey,
                 geminiKey: state.geminiKey,
                 anthropicKey: state.anthropicKey,
+                mistralKey: state.mistralKey,
                 activeLLMModel: state.activeLLMModel,
             })
         );

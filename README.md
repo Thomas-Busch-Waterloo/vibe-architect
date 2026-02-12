@@ -32,7 +32,7 @@ Vibe Architect is an open-source tool that helps you turn a raw app idea into a 
 
 - **Guided brainstorming** — The AI proposes concrete options (not open-ended questions) through a Propose → Refine → Lock workflow
 - **Live design previews** — See your design system rendered in real-time as the AI generates React component previews
-- **Multi-model support** — Bring your own API key for OpenAI (GPT-5.2), Google (Gemini 3), or Anthropic (Claude Opus/Sonnet)
+- **Multi-model support** — Bring your own API key for OpenAI (GPT-5.2), Google (Gemini 3), Anthropic (Claude Opus/Sonnet), or Mistral (Medium/Small)
 - **Voice input** — Speak your ideas using the built-in mic button (Whisper-powered transcription)
 - **Spec editor** — Edit generated specs directly in the built-in markdown editor
 - **Export** — Download your complete spec as markdown files, ready for your coding workflow
@@ -82,6 +82,7 @@ Click the **⚙️ Settings** icon in the app and add your API key(s):
 | OpenAI | GPT-5.2 (High / Medium / XHigh) |
 | Google | Gemini 3 Pro, Gemini 3 Flash |
 | Anthropic | Claude Opus 4.6, Claude Sonnet 4.5 |
+| Mistral | Mistral Medium 3.1, Mistral Small 3.2 |
 
 Keys are stored locally in your browser — they never leave your machine.
 
@@ -94,6 +95,8 @@ Keys are stored locally in your browser — they never leave your machine.
 | Gemini 3 Flash | Google | 65,536 |
 | Claude Opus 4.6 | Anthropic | 128,000 |
 | Claude Sonnet 4.5 | Anthropic | 64,000 |
+| Mistral Medium 3.1 | Mistral | 8,192 |
+| Mistral Small 3.2 | Mistral | 8,192 |
 
 ## Tech Stack
 
