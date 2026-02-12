@@ -87,10 +87,10 @@ export default function Sidebar() {
         <>
             {/* Backdrop - closes sidebar on tap */}
             <div
-                className="absolute inset-0 z-30 bg-black/40 backdrop-blur-sm"
+                className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
                 onClick={() => setSidebarOpen(false)}
             />
-            <div className="animate-slide-in-left absolute inset-y-0 left-0 z-40 flex w-72 max-w-[85vw] flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+            <div className="animate-slide-in-left fixed top-0 left-0 z-40 flex h-[100dvh] w-72 max-w-[85vw] flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-surface)]">
                 {/* Header */}
                 <div className="flex h-12 items-center justify-between border-b border-[var(--border-subtle)] px-4">
                     <span className="text-sm font-semibold text-[var(--accent-muted)]">

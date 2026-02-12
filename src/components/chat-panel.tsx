@@ -29,6 +29,9 @@ export default function ChatPanel() {
         setSandboxCode,
         setPhase,
         setSpecDoc,
+        createProject,
+        createConversation,
+        setSidebarOpen,
     } = useProjectStore();
 
     const { activeLLMModel, getKeyForProvider, isConfigured } = useSettingsStore();
@@ -226,16 +229,34 @@ export default function ChatPanel() {
     };
 
     if (!activeConversationId) {
+        const handleQuickCreate = async () => {
+            const project = await createProject("My Project");
+            createConversation(project.id);
+        };
+
         return (
-            <div className="flex h-full flex-col items-center justify-center text-center">
+            <div className="flex h-full flex-col items-center justify-center text-center px-4">
                 <div className="mb-4 text-4xl">🏗️</div>
                 <h2 className="mb-2 text-lg font-semibold text-[var(--accent-primary)]">
                     Vibe Architect
                 </h2>
-                <p className="max-w-sm text-sm text-[var(--accent-dim)]">
-                    Select a conversation from the sidebar or create a new project to
-                    start brainstorming your next app.
+                <p className="max-w-sm text-sm text-[var(--accent-dim)] mb-5">
+                    Start by creating a project, or open the sidebar to select an existing one.
                 </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                        onClick={handleQuickCreate}
+                        className="rounded-[var(--radius-sm)] bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-medium text-[var(--bg-base)] transition-all hover:brightness-110"
+                    >
+                        + Create Project
+                    </button>
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="rounded-[var(--radius-sm)] border border-[var(--border-subtle)] px-5 py-2.5 text-sm text-[var(--accent-muted)] transition-colors hover:bg-[var(--bg-elevated)]"
+                    >
+                        Open Sidebar
+                    </button>
+                </div>
             </div>
         );
     }
@@ -276,8 +297,8 @@ export default function ChatPanel() {
                                 </div>
                             ) : (
                                 <div className={`min-w-0 max-w-full overflow-x-hidden text-sm text-[var(--accent-muted)] ${isSpecMsg
-                                        ? "rounded-[var(--radius-md)] border-l-[3px] border-[var(--accent-primary)] bg-[var(--accent-primary)]/5 px-4 py-3"
-                                        : ""
+                                    ? "rounded-[var(--radius-md)] border-l-[3px] border-[var(--accent-primary)] bg-[var(--accent-primary)]/5 px-4 py-3"
+                                    : ""
                                     }`}>
                                     {isSpecMsg && (
                                         <div className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent-primary)]/60">

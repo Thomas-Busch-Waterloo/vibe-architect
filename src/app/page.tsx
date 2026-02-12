@@ -39,14 +39,14 @@ export default function Home() {
 
   if (!loaded) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <div className="animate-shimmer h-8 w-32 rounded-[var(--radius-sm)]" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-dvh flex-col overflow-hidden">
       {/* Top bar */}
       <header className="flex h-12 shrink-0 items-center justify-between border-b border-[var(--border-subtle)] px-3 sm:px-4">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
