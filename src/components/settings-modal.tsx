@@ -16,6 +16,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         openai: s.openaiKey,
         gemini: s.geminiKey,
         anthropic: s.anthropicKey,
+        mistral: s.mistralKey,
     });
     const [showKeys, setShowKeys] = useState(false);
 
@@ -24,8 +25,9 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             openai: s.openaiKey,
             gemini: s.geminiKey,
             anthropic: s.anthropicKey,
+            mistral: s.mistralKey,
         });
-    }, [s.openaiKey, s.geminiKey, s.anthropicKey, isOpen]);
+    }, [s.openaiKey, s.geminiKey, s.anthropicKey, s.mistralKey, isOpen]);
 
     if (!isOpen) return null;
 
@@ -33,12 +35,13 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         s.setKey("openai", keys.openai.trim());
         s.setKey("gemini", keys.gemini.trim());
         s.setKey("anthropic", keys.anthropic.trim());
+        s.setKey("mistral", keys.mistral.trim());
         onClose();
     };
 
     const handleClear = () => {
         s.clearKeys();
-        setKeys({ openai: "", gemini: "", anthropic: "" });
+        setKeys({ openai: "", gemini: "", anthropic: "", mistral: "" });
     };
 
     return (
@@ -88,6 +91,14 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         show={showKeys}
                         configured={s.anthropicKey.length > 0}
                     />
+                    <KeyInput
+                        label="Mistral"
+                        value={keys.mistral}
+                        onChange={(v) => setKeys({ ...keys, mistral: v })}
+                        placeholder="your-mistral-key"
+                        show={showKeys}
+                        configured={s.mistralKey.length > 0}
+                    />
                     <button
                         onClick={() => setShowKeys(!showKeys)}
                         className="mt-1 text-xs text-[var(--accent-dim)] transition-colors hover:text-[var(--accent-muted)]"
@@ -104,7 +115,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 m.provider === "openai" ? keys.openai.trim().length > 0
                                     : m.provider === "gemini" ? keys.gemini.trim().length > 0
                                         : m.provider === "anthropic" ? keys.anthropic.trim().length > 0
-                                            : false;
+                                            : m.provider === "mistral" ? keys.mistral.trim().length > 0
+                                                : false;
                             return (
                                 <button
                                     key={m.id}
